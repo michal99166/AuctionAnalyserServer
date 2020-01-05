@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -13,14 +15,22 @@ namespace AuctionAnalyserServer
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            CreateHostBuilder(args);
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+        public static void CreateHostBuilder(string[] args)
+        {
+            var host = Host.CreateDefaultBuilder(args)
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .ConfigureWebHostDefaults(webHostBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
+                    webHostBuilder
+                          .UseContentRoot(Directory.GetCurrentDirectory())
+                          .UseIISIntegration()
+                          .UseStartup<Startup>();
+                })
+                .Build();
+            host.Run();
+        }
     }
 }
