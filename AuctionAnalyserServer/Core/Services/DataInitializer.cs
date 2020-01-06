@@ -22,7 +22,7 @@ namespace AuctionAnalyserServer.Core.Services
         {
             try
             {
-                var users = await _userService.BrowseAsync();
+                var users = await _userService.GetAsync();
                 if (users.Any())
                 {
                     return;

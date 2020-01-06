@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AuctionAnalyserServer.Extensions;
+using AuctionAnalyserServer.Infrastructure.Exceptions.Framework;
 
 namespace AuctionAnalyserServer
 {
@@ -35,6 +36,7 @@ namespace AuctionAnalyserServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddMemoryCache();
             var jwtSettings = Configuration.GetSettings<JwtSettings>();
             var key = Encoding.ASCII.GetBytes(jwtSettings.Key);
             services.AddAuthentication(x =>
@@ -77,6 +79,7 @@ namespace AuctionAnalyserServer
             var jwtSettings = app.ApplicationServices.GetService<JwtSettings>();
 
             MongoConfigurator.Initialize();
+            Infrastructure.Exceptions.Framework.Extensions.UseExceptionHandler(app);
             var generalSettings = app.ApplicationServices.GetService<GeneralSettings>();
             if (generalSettings.SeedData)
             {

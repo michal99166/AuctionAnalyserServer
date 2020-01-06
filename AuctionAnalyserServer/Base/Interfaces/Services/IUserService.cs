@@ -8,7 +8,7 @@ namespace AuctionAnalyserServer.Base.Interfaces.Services
     public interface IUserService : IService
     {
         Task<UserDto> GetAsync(string email);
-        Task<IEnumerable<UserDto>> BrowseAsync();
+        Task<IEnumerable<UserDto>> GetAsync();
         Task RegisterAsync(Guid userId, string email, string username, string password, string role);
         Task LoginAsync(string email, string password);
     }

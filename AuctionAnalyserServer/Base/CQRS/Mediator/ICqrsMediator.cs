@@ -8,7 +8,5 @@ namespace AuctionAnalyserServer.Base.CQRS.Mediator
     {
         void Execute<TCommand>(TCommand command) where TCommand : ICommand;
         TResult Execute<TQuery, TResult>(TQuery query) where TQuery : IQuery;
-        Task ExecuteAsync<TCommand>(TCommand command) where TCommand : ICommand;
-        Task<TResult> ExecuteAsync<TQuery, TResult>(TQuery query) where TQuery : IQuery;
     }
 }

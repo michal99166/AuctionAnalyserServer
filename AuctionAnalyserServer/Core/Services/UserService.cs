@@ -32,11 +32,11 @@ namespace AuctionAnalyserServer.Core.Services
             return _mapper.Map<User, UserDto>(user);
         }
 
-        public async Task<IEnumerable<UserDto>> BrowseAsync()
+        public async Task<IEnumerable<UserDto>> GetAsync()
         {
-            var drivers = await _userRepository.GetAllAsync();
+            var users = await _userRepository.GetAllAsync();
 
-            return _mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(drivers);
+            return _mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
         }
 
         public async Task LoginAsync(string email, string password)

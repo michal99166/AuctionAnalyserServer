@@ -1,4 +1,5 @@
 ﻿using AuctionAnalyserServer.Base.CQRS.Mediator;
+using AuctionAnalyserServer.Infrastructure.CQRS;
 using Autofac;
 
 namespace AuctionAnalyserServer.Infrastructure.IoC.Modules
@@ -9,6 +10,10 @@ namespace AuctionAnalyserServer.Infrastructure.IoC.Modules
         {
             builder.RegisterType<CqrsMediator>()
                 .As<ICqrsMediator>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<CqrsMediatorAsync>()
+                .As<ICqrsMediatorAsync>()
                 .InstancePerLifetimeScope();
         }
     }

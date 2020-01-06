@@ -1,7 +1,8 @@
-﻿namespace AuctionAnalyserServer.Base.CQRS.Command
+﻿using System;
+
+namespace AuctionAnalyserServer.Base.CQRS.Command
 {
     public interface ICommand
     {
-        string CurrentUserId { get; set; }
     }
 }
