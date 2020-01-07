@@ -19,7 +19,7 @@ namespace AuctionAnalyserServer.Controllers
         public async Task<IActionResult> Post([FromBody]AuctionCommand command)
         {
             await ExecuteAsync(command);
-            return Created($"users/{command.Email}", null);
+            return Created($"", null);
         }
     }
 }

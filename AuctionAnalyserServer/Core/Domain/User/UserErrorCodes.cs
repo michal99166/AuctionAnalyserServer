@@ -1,6 +1,6 @@
-﻿namespace AuctionAnalyserServer.Core.Domain
+﻿namespace AuctionAnalyserServer.Core.Domain.User
 {
-    public static class ErrorCodes
+    public static class UserErrorCodes
     {
         public static string InvalidEmail => "invalid_email";
         public static string InvalidPassword => "invalid_password";

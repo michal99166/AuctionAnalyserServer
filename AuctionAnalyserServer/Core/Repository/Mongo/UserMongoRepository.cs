@@ -9,7 +9,7 @@ using MongoDB.Driver.Linq;
 
 namespace AuctionAnalyserServer.Core.Repository.Mongo
 {
-    public class UserMongoRepository : IUserRepository, IMongoRepository
+    public class UserMongoRepository : IUserRepository
     {
         private readonly IMongoDatabase _database;
 

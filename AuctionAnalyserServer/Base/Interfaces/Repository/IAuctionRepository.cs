@@ -5,7 +5,7 @@ using AuctionAnalyserServer.Core.Domain.User;
 
 namespace AuctionAnalyserServer.Base.Interfaces.Repository
 {
-    public interface IUserRepository : IMongoRepository
+    public interface IAuctionRepository : IMongoRepository
     {
         Task<User> GetAsync(Guid id);
         Task<User> GetAsync(string email);

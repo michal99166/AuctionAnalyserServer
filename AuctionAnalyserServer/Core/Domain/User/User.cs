@@ -37,13 +37,13 @@ namespace AuctionAnalyserServer.Core.Domain.User
         {
             if (!NameRegex.IsMatch(username))
             {
-                throw new DomainException(ErrorCodes.InvalidUsername,
+                throw new DomainException(UserErrorCodes.InvalidUsername,
                     "Username is invalid.");
             }
 
             if (String.IsNullOrEmpty(username))
             {
-                throw new DomainException(ErrorCodes.InvalidUsername,
+                throw new DomainException(UserErrorCodes.InvalidUsername,
                     "Username is invalid.");
             }
 
@@ -55,7 +55,7 @@ namespace AuctionAnalyserServer.Core.Domain.User
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                throw new DomainException(ErrorCodes.InvalidEmail,
+                throw new DomainException(UserErrorCodes.InvalidEmail,
                     "Email can not be empty.");
             }
             if (Email == email)
@@ -71,7 +71,7 @@ namespace AuctionAnalyserServer.Core.Domain.User
         {
             if (string.IsNullOrWhiteSpace(role))
             {
-                throw new DomainException(ErrorCodes.InvalidRole,
+                throw new DomainException(UserErrorCodes.InvalidRole,
                     "Role can not be empty.");
             }
             if (Role == role)
@@ -86,22 +86,22 @@ namespace AuctionAnalyserServer.Core.Domain.User
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new DomainException(ErrorCodes.InvalidPassword,
+                throw new DomainException(UserErrorCodes.InvalidPassword,
                     "Password can not be empty.");
             }
             if (string.IsNullOrWhiteSpace(salt))
             {
-                throw new DomainException(ErrorCodes.InvalidPassword,
+                throw new DomainException(UserErrorCodes.InvalidPassword,
                     "Salt can not be empty.");
             }
             if (password.Length < 4)
             {
-                throw new DomainException(ErrorCodes.InvalidPassword,
+                throw new DomainException(UserErrorCodes.InvalidPassword,
                     "Password must contain at least 4 characters.");
             }
             if (password.Length > 100)
             {
-                throw new DomainException(ErrorCodes.InvalidPassword,
+                throw new DomainException(UserErrorCodes.InvalidPassword,
                     "Password can not contain more than 100 characters.");
             }
             if (Password == password)

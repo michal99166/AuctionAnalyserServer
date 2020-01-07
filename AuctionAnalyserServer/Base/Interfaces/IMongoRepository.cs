@@ -1,6 +1,6 @@
 ﻿namespace AuctionAnalyserServer.Base.Interfaces
 {
-    public interface IMongoRepository
+    public interface IMongoRepository : IRepository
     {
         
     }

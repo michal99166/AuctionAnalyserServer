@@ -44,7 +44,7 @@ namespace AuctionAnalyserServer.Core.Services
             var user = await _userRepository.GetAsync(email);
             if (user == null)
             {
-                throw new ServiceException(ErrorCodes.InvalidCredentials,
+                throw new ServiceException(UserErrorCodes.InvalidCredentials,
                     "Invalid credentials");
             }
 
@@ -53,7 +53,7 @@ namespace AuctionAnalyserServer.Core.Services
             {
                 return;
             }
-            throw new ServiceException(ErrorCodes.InvalidCredentials,
+            throw new ServiceException(UserErrorCodes.InvalidCredentials,
                 "Invalid credentials");
         }
 
@@ -63,7 +63,7 @@ namespace AuctionAnalyserServer.Core.Services
             var user = await _userRepository.GetAsync(email);
             if (user != null)
             {
-                throw new ServiceException(ErrorCodes.EmailInUse,
+                throw new ServiceException(UserErrorCodes.EmailInUse,
                     $"User with email: '{email}' already exists.");
             }
 
