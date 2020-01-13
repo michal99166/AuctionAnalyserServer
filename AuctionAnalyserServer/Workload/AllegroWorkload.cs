@@ -39,20 +39,41 @@ namespace AuctionAnalyserServer.Workload
         {
             foreach (var auction in auctions)
             {
-                var doc = GetHtmlDocument(auction);
-                foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//a"))
+                List<HtmlDocument> documents = new List<HtmlDocument>();
+                documents.Add(GetHtmlDocument(auction.Url));
+                int pageNumber = GetPageNumber(documents.Single());
+
+                if (pageNumber > 1)
                 {
-                    //var allegro = node.G
-                    //Auction.AddResultToAction()
+                    for (int i = 1; i < pageNumber; i++)
+                    {
+                        var document = GetHtmlDocument($"{auction.Url}&p={i}");
+                        documents.Add(document);
+                    }
                 }
+
+                //List<string> paragraphs = documents.DocumentNode.SelectNodes("//*[@class = 'b659611']")
+                //        .Select(paragraphNode => paragraphNode.InnerHtml).ToList();
+
+                //foreach (HtmlNode node in documents.DocumentNode.SelectNodes("//*[@class = 'b659611']"))
+                //{
+                //    //var allegro = node.G
+                //    //Auction.AddResultToAction()
+                //}
             }
         }
 
-        private static HtmlDocument GetHtmlDocument(AuctionDto auction)
+        private static int GetPageNumber(HtmlDocument document)
         {
-            var url = $"{auction.Url}";
+            return int.Parse(document.DocumentNode.SelectSingleNode(
+                "//*[@class='_1h7wt _1fkm6 _g1gnj _3db39_1hPb8 _3db39_12jAx']").InnerText);
+        }
+
+        private static HtmlDocument GetHtmlDocument(string url)
+        {
+            var website = $"{url}";
             var web = new HtmlWeb();
-            var doc = web.Load(url);
+            var doc = web.Load(website);
             return doc;
         }
 
