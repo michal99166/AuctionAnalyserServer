@@ -18,6 +18,7 @@ namespace AuctionAnalyserServer.Core.Services
         private readonly IEncrypter _encrypter;
         private readonly IMapper _mapper;
 
+
         public UserService(IUserRepository userRepository, IEncrypter encrypter, IMapper mapper)
         {
             _userRepository = userRepository;

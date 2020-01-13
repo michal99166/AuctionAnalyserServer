@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using AuctionAnalyserServer.Base.Interfaces;
 using AuctionAnalyserServer.Infrastructure.Exceptions;
 
 namespace AuctionAnalyserServer.Core.Domain.User
 {
-    public class User
+    public class User : IIdentifable<Guid>
     {
         private static readonly Regex NameRegex = new Regex("^(?![_.-])(?!.*[_.-]{2})[a-zA-Z0-9._.-]+(?<![_.-])$");
 
-        public Guid Id { get; protected set; }
+        public Guid Id { get; set; }
         public string Email { get; protected set; }
         public string Password { get; protected set; }
         public string Salt { get; protected set; }

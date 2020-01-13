@@ -57,13 +57,11 @@ namespace AuctionAnalyserServer
                         ValidIssuer = jwtSettings.ClientUrl
                     };
                 });
-
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterModule(new ContainerModule(Configuration));
-            //builder.RegisterModule(new SettingsModule(Configuration));
         }
 
 

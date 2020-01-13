@@ -27,6 +27,7 @@ namespace AuctionAnalyserServer.Infrastructure.IoC
             builder.RegisterModule<MongoModule>();
             builder.RegisterModule<ServiceModule>();
             builder.RegisterModule(new SettingsModule(_configuration));
+            builder.RegisterModule<WorkloadModule>();
         }
     }
 }

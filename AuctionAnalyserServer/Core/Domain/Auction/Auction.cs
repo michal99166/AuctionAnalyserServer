@@ -1,26 +1,44 @@
 ﻿using System;
+using AuctionAnalyserServer.Base.Interfaces;
 using AuctionAnalyserServer.Infrastructure.Exceptions;
 
 namespace AuctionAnalyserServer.Core.Domain.Auction
 {
-    public class Auction
+    public class Auction : IIdentifable<Guid>
     {
-        public Guid AuctionId { get; protected set; }
+        public Guid Id { get; set; }
         public string Name { get; protected set; }
         public string Url { get; protected set; }
         public bool IsActive { get; protected set; }
+        public AllegroAuction AllegroAuction { get; set; }
         public Guid UserId { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
 
-        public Auction(string name, string url, bool isActive, Guid userId)
+        private Auction(string name, string url, bool isActive, Guid userId)
         {
-            AuctionId = Guid.NewGuid();
+            Id = Guid.NewGuid();
             SetAuctionName(name);
             SetUrl(url);
             SetActive(isActive);
             SeUserId(userId);
             CreatedAt = DateTime.Now;
+        }
+
+        public static Auction Create(string name, string url, bool isActive, Guid userId)
+        {
+            return new Auction(name, url, isActive, userId);
+        }
+
+        public static Auction AddResultToAction(AllegroAuction allegroAuction)
+        {
+            return new Auction(allegroAuction);
+        }
+
+        private Auction(AllegroAuction allegroAuction)
+        {
+            AllegroAuction = allegroAuction;
+            UpdatedAt = DateTime.Now;
         }
 
         public void SetAuctionName(string name)
@@ -61,5 +79,6 @@ namespace AuctionAnalyserServer.Core.Domain.Auction
             UserId = userId;
             UpdatedAt = DateTime.Now;
         }
+
     }
 }

@@ -1,17 +1,17 @@
-﻿using System;
+﻿using AuctionAnalyserServer.Core.Domain.Auction;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AuctionAnalyserServer.Core.Domain.User;
 
 namespace AuctionAnalyserServer.Base.Interfaces.Repository
 {
     public interface IAuctionRepository : IMongoRepository
     {
-        Task<User> GetAsync(Guid id);
-        Task<User> GetAsync(string email);
-        Task<IEnumerable<User>> GetAllAsync();
-        Task AddAsync(User user);
-        Task UpdateAsync(User user);
+        Task<Auction> GetAsync(Guid id);
+        Task<Auction> GetAsync(string url);
+        Task<IEnumerable<Auction>> GetAllAsync();
+        Task AddAsync(Auction auction);
+        Task UpdateAsync(Auction auction);
         Task RemoveAsync(Guid id);
     }
 }

@@ -15,9 +15,9 @@ namespace AuctionAnalyserServer.Infrastructure.CQRS.CommandHandlers
             this.auctionService = auctionService;
         }
 
-        public Task HandleAsync(AuctionCommand command)
+        public async Task HandleAsync(AuctionCommand command)
         {
-            throw new NotImplementedException();
+            await auctionService.CreateAuctionAsync(command, command.UserId);
         }
     }
 }

@@ -13,31 +13,30 @@ namespace AuctionAnalyserServer.Core.Repository.Mongo
     {
         private readonly IMongoDatabase _database;
 
-        public UserMongoRepository(IMongoDatabase database)
+        public UserMongoRepository (IMongoDatabase database)
         {
             _database = database;
         }
 
+        public async Task<IEnumerable<User>> GetAllAsync()
+            => await Model.AsQueryable().ToListAsync();
+
+        public async Task AddAsync(User auction)
+            => await Model.InsertOneAsync(auction);
+
         public async Task<User> GetAsync(string email)
-            => await Users.AsQueryable().FirstOrDefaultAsync(x => x.Email == email);
+            => await Model.AsQueryable().FirstOrDefaultAsync(x => x.Email == email);
 
         public async Task<User> GetAsync(Guid userId)
-            => await Users.AsQueryable().FirstOrDefaultAsync(x => x.Id == userId);
-
-        public async Task<IEnumerable<User>> GetAllAsync()
-            => await Users.AsQueryable().ToListAsync();
-
-        public async Task AddAsync(User user)
-            => await Users.InsertOneAsync(user);
+            => await Model.AsQueryable().FirstOrDefaultAsync(x => x.Id == userId);
 
         public async Task UpdateAsync(User user)
-            => await Users.ReplaceOneAsync(x => x.Id == user.Id, user);
+            => await Model.ReplaceOneAsync(x => x.Id == user.Id, user);
 
         public async Task RemoveAsync(Guid id)
-            => await Users.DeleteOneAsync(x => x.Id == id);
+            => await Model.DeleteOneAsync(x => x.Id == id);
 
-        private IMongoCollection<User> Users => _database.GetCollection<User>("Users");
-
+        protected IMongoCollection<User> Model => _database.GetCollection<User>("Users");
 
     }
 }

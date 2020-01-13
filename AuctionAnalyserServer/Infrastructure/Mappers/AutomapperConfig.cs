@@ -1,4 +1,6 @@
-﻿using AuctionAnalyserServer.Core.Domain.User;
+﻿using System.Collections.Generic;
+using AuctionAnalyserServer.Core.Domain.Auction;
+using AuctionAnalyserServer.Core.Domain.User;
 using AuctionAnalyserServer.Infrastructure.DTO;
 using AutoMapper;
 
@@ -10,6 +12,7 @@ namespace AuctionAnalyserServer.Infrastructure.Mappers
                 => new MapperConfiguration(cfg =>
                     {
                         cfg.CreateMap<User, UserDto>();
+                        cfg.CreateMap<Auction, AuctionDto>();
                     }).CreateMapper();
     }
 }
