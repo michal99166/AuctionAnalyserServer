@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AuctionAnalyserServer.Infrastructure.CQRS.Command;
 using System.Threading.Tasks;
+using AuctionAnalyserServer.Core.Domain.Auction;
 using AuctionAnalyserServer.Infrastructure.DTO;
 
 namespace AuctionAnalyserServer.Base.Interfaces.Services
@@ -11,7 +12,7 @@ namespace AuctionAnalyserServer.Base.Interfaces.Services
         Task CreateAuctionAsync(AuctionCommand auctionCommand, Guid userId);
         Task<AuctionDto> GetAsync(string auctionName);
         Task<IEnumerable<AuctionDto>> GetAsync();
-        Task UpdateAuctionAsync(string url, Guid userId);
+        Task UpdateAuctionAsync(string url, AllegroAuction allegroAuction);
 
     }
 }

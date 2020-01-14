@@ -47,15 +47,16 @@ namespace AuctionAnalyserServer.Core.Services
             return _mapper.Map<IEnumerable<Auction>, IEnumerable<AuctionDto>>(auctions);
         }
 
-        public async Task UpdateAuctionAsync(string url, Guid userId)
+        public async Task UpdateAuctionAsync(string url, AllegroAuction allegroAuction)
         {
-            var auction = await _repository.GetAsync(url);
-            if (auction is null)
+            var auctionDb = await _repository.GetAsync(url);
+            if (auctionDb is null)
             {
                 throw new Exception("Auction does not exist in database.");
             }
 
-            await _repository.UpdateAsync(auction);
+            auctionDb.AllegroAuction = allegroAuction;
+            await _repository.UpdateAsync(auctionDb);
         }
     }
 }
