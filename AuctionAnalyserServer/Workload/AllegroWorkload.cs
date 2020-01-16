@@ -29,42 +29,45 @@ namespace AuctionAnalyserServer.Workload
                 var auctions = await _auctionService.GetAsync();
                 _logger.LogInformation($"Znaleziono aukcji allegro {auctions.Count()} do przetworzenia.");
 
-                ProcessAuctions(auctions);
+                ProcessAuctions(auctions, new List<HtmlDocument>());
                 await Task.Delay(10000, cancellationToken);
 
             } while (!cancellationToken.IsCancellationRequested);
         }
 
-        private async void ProcessAuctions(IEnumerable<AuctionDto> autcionsUrl)
+        private async void ProcessAuctions(IEnumerable<AuctionDto> autcionsUrl, List<HtmlDocument> htmlPages)
         {
             foreach (var auction in autcionsUrl)
             {
-                List<HtmlDocument> documents = new List<HtmlDocument>();
-                documents.Add(GetHtmlDocument(auction.Url));
-                int pageCount = GetPageNumber(documents.Single());
+                List<AuctionTypeBase> auctions = new List<AuctionTypeBase>();
+                htmlPages.Add(GetHtmlDocument(auction.Url));
+                GetHtmlPages(auction, htmlPages);
+                GetAuctionsFromPage(htmlPages, auctions);
+                await _auctionService.UpdateAuctionAsync(auction.Url, auctions);
+            }
+        }
 
-                if (pageCount > 1)
+        private static void GetAuctionsFromPage(List<HtmlDocument> documents, List<AuctionTypeBase> allegroAuctions)
+        {
+            foreach (var document in documents)
+            {
+                allegroAuctions.Add(AuctionTypeBase.Create(
+                    document.DocumentNode.SelectNodes("//h2[@class='ebc9be2']//a").First().ChildNodes[0]?.InnerText,
+                     document.DocumentNode.SelectNodes("//h2[@class='ebc9be2']//a").First().Attributes["href"]?.Value,
+                     document.DocumentNode.SelectNodes("//span[@class='fee8042']").First().ChildNodes[0]?.InnerText
+                ));
+            }
+        }
+
+        private void GetHtmlPages(AuctionDto auction, List<HtmlDocument> documents)
+        {
+            int pageCount = GetPageNumber(documents.Single());
+            if (pageCount > 1)
+            {
+                for (int i = 1; i < pageCount; i++)
                 {
-                    for (int i = 1; i < pageCount; i++)
-                    {
-                        var document = GetHtmlDocument($"{auction.Url}&p={i}");
-                        documents.Add(document);
-                    }
-                }
-
-                foreach (var document in documents)
-                {
-                    AllegroAuction allegroAuction = new AllegroAuction
-                    {
-                        Title = document.DocumentNode.SelectNodes("//h2[@class='ebc9be2']//a").First().ChildNodes[0]
-                            ?.InnerText,
-                        Url = document.DocumentNode.SelectNodes("//h2[@class='ebc9be2']//a").First().Attributes["href"]
-                            ?.Value,
-                        Price = document.DocumentNode.SelectNodes("//span[@class='fee8042']").First().ChildNodes[0]
-                            ?.InnerText
-                    };
-
-                    await _auctionService.UpdateAuctionAsync(auction.Url, allegroAuction);
+                    var document = GetHtmlDocument($"{auction.Url}&p={i}");
+                    documents.Add(document);
                 }
             }
         }

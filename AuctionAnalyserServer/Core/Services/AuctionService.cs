@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AuctionAnalyserServer.Base.Interfaces.Repository;
 using AuctionAnalyserServer.Base.Interfaces.Services;
@@ -47,7 +48,7 @@ namespace AuctionAnalyserServer.Core.Services
             return _mapper.Map<IEnumerable<Auction>, IEnumerable<AuctionDto>>(auctions);
         }
 
-        public async Task UpdateAuctionAsync(string url, AllegroAuction allegroAuction)
+        public async Task UpdateAuctionAsync(string url, IEnumerable<AuctionTypeBase> allegroAuction)
         {
             var auctionDb = await _repository.GetAsync(url);
             if (auctionDb is null)
@@ -55,7 +56,7 @@ namespace AuctionAnalyserServer.Core.Services
                 throw new Exception("Auction does not exist in database.");
             }
 
-            auctionDb.AllegroAuction = allegroAuction;
+            auctionDb.AuctionKind = allegroAuction.ToArray();
             await _repository.UpdateAsync(auctionDb);
         }
     }

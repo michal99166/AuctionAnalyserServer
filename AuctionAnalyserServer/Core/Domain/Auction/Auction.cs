@@ -10,7 +10,7 @@ namespace AuctionAnalyserServer.Core.Domain.Auction
         public string Name { get; protected set; }
         public string Url { get; protected set; }
         public bool IsActive { get; protected set; }
-        public AllegroAuction AllegroAuction { get; set; }
+        public AuctionTypeBase[] AuctionKind { get; set; }
         public Guid UserId { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
@@ -30,14 +30,14 @@ namespace AuctionAnalyserServer.Core.Domain.Auction
             return new Auction(name, url, isActive, userId);
         }
 
-        public static Auction AddResultToAction(AllegroAuction allegroAuction)
+        public static Auction AddResultToAction(AuctionTypeBase[] allegroAuction)
         {
             return new Auction(allegroAuction);
         }
 
-        private Auction(AllegroAuction allegroAuction)
+        private Auction(AuctionTypeBase[] auctionKind)
         {
-            AllegroAuction = allegroAuction;
+            AuctionKind = auctionKind;
             UpdatedAt = DateTime.Now;
         }
 
@@ -79,6 +79,5 @@ namespace AuctionAnalyserServer.Core.Domain.Auction
             UserId = userId;
             UpdatedAt = DateTime.Now;
         }
-
     }
 }
