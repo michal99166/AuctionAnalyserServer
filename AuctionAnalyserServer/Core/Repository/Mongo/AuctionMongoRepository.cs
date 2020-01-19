@@ -25,7 +25,7 @@ namespace AuctionAnalyserServer.Core.Repository.Mongo
             => await Model.InsertOneAsync(auction);
 
         public async Task<Auction> GetAsync(string url)
-            => await Model.AsQueryable().FirstOrDefaultAsync(x => x.Url == url);
+            => await Model.AsQueryable().FirstOrDefaultAsync(x => x.FilteredUrl == url);
 
         public async Task<Auction> GetAsync(Guid userId)
             => await Model.AsQueryable().FirstOrDefaultAsync(x => x.UserId == userId);

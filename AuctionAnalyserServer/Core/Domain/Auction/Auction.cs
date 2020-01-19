@@ -1,27 +1,40 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using AuctionAnalyserServer.Base.Interfaces;
+using AuctionAnalyserServer.Core.Factory;
 using AuctionAnalyserServer.Infrastructure.Exceptions;
 
 namespace AuctionAnalyserServer.Core.Domain.Auction
 {
     public class Auction : IIdentifable<Guid>
     {
+        private ISet<AuctionDetails> _auctionDetail = new HashSet<AuctionDetails>();
         public Guid Id { get; set; }
         public string Name { get; protected set; }
-        public string Url { get; protected set; }
+        public string FilteredUrl { get; protected set; }
         public bool IsActive { get; protected set; }
-        public AuctionTypeBase[] AuctionKind { get; set; }
+        public IEnumerable<AuctionDetails> AuctionDetail
+        {
+            get => _auctionDetail;
+            set => _auctionDetail = new HashSet<AuctionDetails>(value);
+        }
+        public AuctionType AuctionType { get; protected set; }
         public Guid UserId { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
 
+        public Auction()
+        {
+            
+        }
         private Auction(string name, string url, bool isActive, Guid userId)
         {
             Id = Guid.NewGuid();
             SetAuctionName(name);
-            SetUrl(url);
+            SetFilteredUrl(url);
             SetActive(isActive);
-            SeUserId(userId);
+            SetOwnerUserId(userId);
             CreatedAt = DateTime.Now;
         }
 
@@ -30,15 +43,14 @@ namespace AuctionAnalyserServer.Core.Domain.Auction
             return new Auction(name, url, isActive, userId);
         }
 
-        public static Auction AddResultToAction(AuctionTypeBase[] allegroAuction)
+        public void AddAuctionDetails(AuctionDetails auctionDetails)
         {
-            return new Auction(allegroAuction);
-        }
+            if (auctionDetails is null)
+            {
+                throw new DomainException(AuctionErrorCodes.InvalidAuctionDetails, "Any auction details to add.");
+            }
 
-        private Auction(AuctionTypeBase[] auctionKind)
-        {
-            AuctionKind = auctionKind;
-            UpdatedAt = DateTime.Now;
+            _auctionDetail.Add(AuctionDetails.Create(auctionDetails.AuctionUrl, auctionDetails.Title, auctionDetails.Price, auctionDetails.Currency));
         }
 
         public void SetAuctionName(string name)
@@ -52,14 +64,15 @@ namespace AuctionAnalyserServer.Core.Domain.Auction
             UpdatedAt = DateTime.Now;
         }
 
-        public void SetUrl(string url)
+        public void SetFilteredUrl(string url)
         {
             if (string.IsNullOrEmpty(url))
             {
                 throw new DomainException(AuctionErrorCodes.InvalidAuctionUrl, "Auction name is invalid");
             }
 
-            Url = url;
+            FilteredUrl = url.ToLower();
+            AuctionType = AuctionTypeFactory.CreateFactory().GetAuctionType(url);
             UpdatedAt = DateTime.Now;
         }
 
@@ -69,11 +82,11 @@ namespace AuctionAnalyserServer.Core.Domain.Auction
             UpdatedAt = DateTime.Now;
         }
 
-        public void SeUserId(Guid userId)
+        public void SetOwnerUserId(Guid userId)
         {
             if (userId == Guid.Empty)
             {
-                throw  new DomainException(AuctionErrorCodes.InvalidUserId, "UserId is invalid");
+                throw new DomainException(AuctionErrorCodes.InvalidUserId, "UserId is invalid");
             }
 
             UserId = userId;

@@ -12,9 +12,9 @@ namespace AuctionAnalyserServer.Controllers
     public class LoginController : ApiControllerBase
     {
         private readonly IMemoryCache _cache;
-        public LoginController(ICqrsMediator cqrsMediator, ICqrsMediatorAsync cqrsMediatorAsync, IMemoryCache _cache) : base(cqrsMediator, cqrsMediatorAsync)
+        public LoginController(ICqrsMediator cqrsMediator, ICqrsMediatorAsync cqrsMediatorAsync, IMemoryCache cache) : base(cqrsMediator, cqrsMediatorAsync)
         {
-            this._cache = _cache;
+            _cache = cache;
         }
 
         [HttpPost]

@@ -12,7 +12,8 @@ namespace AuctionAnalyserServer.Base.Interfaces.Services
         Task CreateAuctionAsync(AuctionCommand auctionCommand, Guid userId);
         Task<AuctionDto> GetAsync(string auctionName);
         Task<IEnumerable<AuctionDto>> GetAsync();
-        Task UpdateAuctionAsync(string url, IEnumerable<AuctionTypeBase> allegroAuction);
+        Task UpdateAuctionAsync(Auction auction);
+        Task AddAuctionDetailsAsync(string url, IEnumerable<AuctionDetails> auctionDetails);
 
     }
 }

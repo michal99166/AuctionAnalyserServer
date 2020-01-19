@@ -48,16 +48,31 @@ namespace AuctionAnalyserServer.Core.Services
             return _mapper.Map<IEnumerable<Auction>, IEnumerable<AuctionDto>>(auctions);
         }
 
-        public async Task UpdateAuctionAsync(string url, IEnumerable<AuctionTypeBase> allegroAuction)
+        public async Task UpdateAuctionAsync(Auction auction)
+        {
+            var auctionDb = await _repository.GetAsync(auction.FilteredUrl);
+            if (auctionDb is null)
+            {
+                throw new Exception("Auction does not exist in database.");
+            }
+
+            await _repository.UpdateAsync(auctionDb);
+        }
+
+        public async Task AddAuctionDetailsAsync(string url, IEnumerable<AuctionDetails> auctionDetails)
         {
             var auctionDb = await _repository.GetAsync(url);
             if (auctionDb is null)
             {
                 throw new Exception("Auction does not exist in database.");
             }
-
-            auctionDb.AuctionKind = allegroAuction.ToArray();
+            
+            foreach (var auctionDetail in auctionDetails)
+            {
+                auctionDb.AddAuctionDetails(auctionDetail);
+            }
             await _repository.UpdateAsync(auctionDb);
+
         }
     }
 }
