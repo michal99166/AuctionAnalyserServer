@@ -31,7 +31,6 @@
   <ItemGroup>
     <Folder Include="Infrastructure\CQRS\Query\" />
     <Folder Include="Logs\" />
-    <Folder Include="Workload\" />
   </ItemGroup>
 
 </Project>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using AuctionAnalyserServer.Base.Interfaces.Services;
 using AuctionAnalyserServer.Core.Domain.Auction;
 using AuctionAnalyserServer.Infrastructure.DTO;
@@ -12,13 +13,13 @@ using Microsoft.Extensions.Logging;
 
 namespace AuctionAnalyserServer.Workload
 {
-    public class AllegroWorkload : IHostedService
+    public class AuctionGatherBaseHostedService : IHostedService
     {
-        private readonly ILogger<AllegroWorkload> _logger;
+        private readonly ILogger<AuctionGatherBaseHostedService> _logger;
         private readonly IAuctionService _auctionService;
         private int AuctionCounter = 0;
 
-        public AllegroWorkload(ILogger<AllegroWorkload> logger, IAuctionService auctionService)
+        public AuctionGatherBaseHostedService(ILogger<AuctionGatherBaseHostedService> logger, IAuctionService auctionService)
         {
             _logger = logger;
             _auctionService = auctionService;
@@ -34,37 +35,42 @@ namespace AuctionAnalyserServer.Workload
                 {
                     return;
                 }
-                ProcessAuctions(auctions, new List<HtmlDocument>());
+                ProcessAuctions(auctions);
                 await Task.Delay(10000, cancellationToken);
 
             } while (!cancellationToken.IsCancellationRequested);
         }
 
-        private async void ProcessAuctions(IEnumerable<AuctionDto> autcionsUrl, List<HtmlDocument> htmlPages)
+        private async void ProcessAuctions(IEnumerable<AuctionDto> auctions)
         {
-            foreach (var auction in autcionsUrl)
+            foreach (var auction in auctions)
             {
-                List<AuctionDetails> auctions = new List<AuctionDetails>();
-                htmlPages.Add(GetHtmlDocument(auction.FilteredUrl));
-                GetHtmlPages(auction, htmlPages);
-                GetAuctionsFromPage(htmlPages, auctions);
-                await _auctionService.AddAuctionDetailsAsync(auction.FilteredUrl, auctions);
+                var auctionDetails = new List<AuctionDetails>();
+                var htmlPages = new List<HtmlDocument>
+                {
+                    GetHtmlDocument(auction.FilteredUrl)
+                };
+
+                GetHtmlDocumentPages(auction, htmlPages);
+                GetAuctionsDetailsFromPage(htmlPages, auctionDetails);
+                await _auctionService.AddAuctionDetailsAsync(auction.FilteredUrl, auctionDetails);
             }
         }
 
-        private void GetAuctionsFromPage(List<HtmlDocument> documents, List<AuctionDetails> auctionDetails)
+        private void GetAuctionsDetailsFromPage(List<HtmlDocument> pages, List<AuctionDetails> auctionDetails)
         {
-            foreach (var document in documents)
+            foreach (var page in pages)
             {
-                AuctionDetails auctionDetailTemp;
                 try
                 {
-                    auctionDetailTemp = AuctionDetails.Create(
-                        document.DocumentNode.SelectNodes("//h2[@class='ebc9be2']//a").First().ChildNodes[0]?.InnerText,
-                        document.DocumentNode.SelectNodes("//h2[@class='ebc9be2']//a").First().Attributes["href"]?.Value,
-                        document.DocumentNode.SelectNodes("//span[@class='fee8042']").First().ChildNodes[0]?.InnerText,
-                        document.DocumentNode.SelectNodes("//span[@class='fee8042']").First().ChildNodes[3]?.InnerText);
-                     auctionDetails.Add(auctionDetailTemp);
+                    foreach (var auction in page.DocumentNode.SelectNodes(".//*[@class='_00d6b80']"))
+                    {
+                        string title = auction.SelectSingleNode(".//h2[@class='ebc9be2']//a")?.InnerText;
+                        string url = auction.SelectSingleNode(".//h2[@class='ebc9be2']//a")?.GetAttributeValue("href", "title");
+                        string price = auction.SelectSingleNode(".//*[@class='fee8042']").ChildNodes[0].InnerText.Replace(" ", string.Empty);
+                        string currency = auction.SelectSingleNode(".//span[@class='_31f32cc']")?.InnerText;
+                        auctionDetails.Add(AuctionDetails.Create(url, title, price, currency));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -76,11 +82,10 @@ namespace AuctionAnalyserServer.Workload
                 AuctionCounter++;
             }
 
-            
-            _logger.LogInformation($"Downloaded progress auction : {AuctionCounter} / {documents.Count}");
+            _logger.LogInformation($"Downloaded progress auction : {AuctionCounter} / {pages.Count}");
         }
 
-        private void GetHtmlPages(AuctionDto auction, List<HtmlDocument> documents)
+        private void GetHtmlDocumentPages(AuctionDto auction, List<HtmlDocument> documents)
         {
             int pageCount = GetPageNumber(documents.Single());
             _logger.LogInformation($"Znaleziono stron: {pageCount} dla aukcji: {auction.FilteredUrl}");

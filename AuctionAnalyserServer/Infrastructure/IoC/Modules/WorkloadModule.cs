@@ -9,7 +9,7 @@ namespace AuctionAnalyserServer.Infrastructure.IoC.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<AllegroWorkload>()
+            builder.RegisterType<AuctionGatherBaseHostedService>()
                 .As<IHostedService>()
                 .InstancePerDependency();
         }
