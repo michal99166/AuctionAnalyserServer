@@ -30,7 +30,7 @@ namespace AuctionAnalyserServer.Workload
             do
             {
                 var auctions = await _auctionService.GetAsync();
-                _logger.LogInformation($"Znaleziono aukcji allegro {auctions.Count()} do przetworzenia.");
+                _logger.LogInformation($"Znaleziono {auctions.Count()} aukcji do przetworzenia.");
                 if (!auctions.Any())
                 {
                     return;
@@ -47,6 +47,7 @@ namespace AuctionAnalyserServer.Workload
             {
                 var auctionDetails = new List<AuctionDetails>();
                 var htmlPages = new List<HtmlDocument>
+
                 {
                     GetHtmlDocument(auction.FilteredUrl)
                 };
@@ -65,8 +66,8 @@ namespace AuctionAnalyserServer.Workload
                 {
                     foreach (var auction in page.DocumentNode.SelectNodes(".//*[@class='_00d6b80']"))
                     {
-                        string title = auction.SelectSingleNode(".//h2[@class='ebc9be2']//a")?.InnerText;
-                        string url = auction.SelectSingleNode(".//h2[@class='ebc9be2']//a")?.GetAttributeValue("href", "title");
+                        string title = auction.SelectSingleNode(".//*[@class='_734e7e0']").FirstChild.ChildNodes[0].InnerText;
+                        string url = auction.SelectSingleNode(".//*[@class='_734e7e0']").FirstChild.FirstChild.GetAttributeValue("href", "title");
                         string price = auction.SelectSingleNode(".//*[@class='fee8042']").ChildNodes[0].InnerText.Replace(" ", string.Empty);
                         string currency = auction.SelectSingleNode(".//span[@class='_31f32cc']")?.InnerText;
                         auctionDetails.Add(AuctionDetails.Create(url, title, price, currency));
